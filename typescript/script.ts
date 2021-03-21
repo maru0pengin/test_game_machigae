@@ -11,7 +11,6 @@ import { createButton } from "./create_button"; // ボタン生成関数をイ�
 // PIXI_SOUNDを有効にするためには必ずこの初期化命令を実行すること
 PIXI_SOUND.default.init();
 
-
 // PIXI.JSアプリケーションを呼び出す (この数字はゲーム内の画面サイズ)
 const app = new PIXI.Application({ width: 400, height: 600 });
 
@@ -30,7 +29,6 @@ app.renderer.view.style.border = "2px dashed black";
 
 // canvasの背景色
 app.renderer.backgroundColor = 0x333333;
-
 
 // ゲームで使用する画像をあらかじめ読み込んでおく(プリロードという)
 // v5.3.2　だと PIXI.Loader.shared.addでプリロードする
@@ -95,8 +93,8 @@ PIXI.Loader.shared.load((loader, resources) => {
         let y2 = 200;
 
         //ヒットエリアの描画
-        let width = 20;//ヒットエリアの幅
-        let rect = new PIXI.Rectangle(80 - width / 2, 338 - width / 2, width, width);
+        let length = 20;//ヒットエリアの幅
+        let rect = new PIXI.Rectangle(80 - length / 2, 338 - length / 2, length, length);
         obj.beginFill(0xfff000, 0.5); //ヒットエリアは透明
         obj.drawShape(rect);
         obj.endFill();
