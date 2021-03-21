@@ -45,6 +45,9 @@ app.view.addEventListener('pointermove', (ev) => {
 });
 
 
+
+
+
 // プリロード処理が終わったら呼び出されるイベント
 PIXI.Loader.shared.load((loader, resources) => {
     /**
@@ -54,9 +57,12 @@ PIXI.Loader.shared.load((loader, resources) => {
     let score = 0; // スコア
     let ballVx = 5; // ボールの毎フレーム動くx方向
     let ballVy = 0; // ボールの毎フレーム動くy方向
+    let timmer = 0; // タイマー
+    let displayTimmer = "";
 
     // このあたりに書いていた、ボタン生成関数やシーン移行関数は別ファイルにまとめてモジュール化しました
     // このファイル先頭でimportしてファイルを引っ張ってきています。便利！
+
 
     /**
      * ゲームのメインシーンを生成する関数
@@ -69,6 +75,8 @@ PIXI.Loader.shared.load((loader, resources) => {
 
         // スコアを初期化する
         score = 0;
+        // タイマーを初期化する
+        timmer = 0;
 
         // ゲーム用のシーンを生成
         const gameScene = new PIXI.Container();
@@ -134,10 +142,19 @@ PIXI.Loader.shared.load((loader, resources) => {
         const text = new PIXI.Text("SCORE:0", textStyle); //スコア表示テキスト
         gameScene.addChild(text); // スコア表示テキストを画面に追加する
 
+        const textTimer = new PIXI.Text("Timer:0", textStyle); //スコア表示テキスト
+        textTimer.x = 100;
+        gameScene.addChild(textTimer); // スコア表示テキストを画面に追加する
+
         function gameLoop() // 毎フレームごとに処理するゲームループ
         {
             // スコアテキストを毎フレームアップデートする
             text.text = `SCORE:${score}`;
+
+            timmer += 1 / 60;
+            displayTimmer = timmer.toFixed(2);
+
+            textTimer.text = `Timer:${displayTimmer}`;
 
             if (score === 0) return; // スコアが０の時(球に触っていないとき)はここで終了させる
 
