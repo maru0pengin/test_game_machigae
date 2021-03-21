@@ -5,10 +5,9 @@ import * as PIXI from "pixi.js";
  * @param width 横幅
  * @param height 縦幅
  */
-export function createButton(text: string, width: number, height: number, color: number, onClick: () => void)
-{
-    const fontSize = 20; // フォントサイズ
-    const buttonAlpha = 0.6; // ボタン背景の透明度
+export function createButton(text: string, width: number, height: number, color: number, onClick: () => void) {
+    const fontSize = 18; // フォントサイズ
+    const buttonAlpha = 1.0; // ボタン背景の透明度
     const buttonContainer = new PIXI.Container(); // ボタンコンテナ（ここにテキストと背景色を追加して返り値とする）
 
     // ボタン作成
@@ -22,11 +21,8 @@ export function createButton(text: string, width: number, height: number, color:
 
     // テキストに関するパラメータを定義する(ここで定義した意外にもたくさんパラメータがある)
     const textStyle = new PIXI.TextStyle({
-        fontFamily: "Arial", // フォント
-        fontSize: fontSize,// フォントサイズ
-        fill: 0xffffff, // 色(16進数で定義するので#ffffffと書かずに0xffffffと書く)
-        dropShadow: true, // ドロップシャドウを有効にする（右下に影をつける）
-        dropShadowDistance: 2, // ドロップシャドウの影の距離
+        fontFamily: "Myriad", // フォント
+        fill: 0xffffff, // 色(16進数で定義する これはオレンジ色)
     });
 
     const buttonText = new PIXI.Text(text, textStyle); // テキストオブジェクトをtextStyleのパラメータで定義
