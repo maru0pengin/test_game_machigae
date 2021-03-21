@@ -11,6 +11,7 @@ import { createButton } from "./create_button"; // ボタン生成関数をイ�
 // PIXI_SOUNDを有効にするためには必ずこの初期化命令を実行すること
 PIXI_SOUND.default.init();
 
+
 // PIXI.JSアプリケーションを呼び出す (この数字はゲーム内の画面サイズ)
 const app = new PIXI.Application({ width: 400, height: 600 });
 
@@ -30,6 +31,7 @@ app.renderer.view.style.border = "2px dashed black";
 // canvasの背景色
 app.renderer.backgroundColor = 0x333333;
 
+
 // ゲームで使用する画像をあらかじめ読み込んでおく(プリロードという)
 // v5.3.2　だと PIXI.Loader.shared.addでプリロードする
 PIXI.Loader.shared.add("../sound/hit.mp3");
@@ -37,6 +39,13 @@ PIXI.Loader.shared.add("../image/ball.png");
 PIXI.Loader.shared.add("../image/1.png");
 PIXI.Loader.shared.add("../image/2.png");
 const sceneManager = new SceneManager(app);
+
+
+// 一座標確認に使用
+app.view.addEventListener('pointermove', (ev) => {
+    console.log(ev.clientX, ev.clientY);
+});
+
 
 // プリロード処理が終わったら呼び出されるイベント
 PIXI.Loader.shared.load((loader, resources) => {
@@ -78,6 +87,29 @@ PIXI.Loader.shared.load((loader, resources) => {
         image2.x = 50;
         image2.y = 300;
         gameScene.addChild(image2); // ボールをシーンに追加
+
+        var obj = new PIXI.Graphics();
+
+        let x = 100;
+        let y1 = 100;
+        let y2 = 200;
+
+        //ヒットエリアの描画
+        let width = 20;//ヒットエリアの幅
+        let rect = new PIXI.Rectangle(80 - width / 2, 338 - width / 2, width, width);
+        obj.beginFill(0xfff000, 0.5); //ヒットエリアは透明
+        obj.drawShape(rect);
+        obj.endFill();
+
+        obj.interactive = true;
+        obj.hitArea = rect;
+
+        obj.on('click', function () {
+            score++
+            console.log('click');
+        });
+
+        gameScene.addChild(obj)
 
         // ボール画像を表示するスプライトオブジェクトを実体化させる
         const ball = new PIXI.Sprite(resources["../image/ball.png"].texture); //引数には、プリロードしたURLを追加する
