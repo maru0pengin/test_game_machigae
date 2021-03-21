@@ -34,6 +34,8 @@ app.renderer.backgroundColor = 0x333333;
 // v5.3.2　だと PIXI.Loader.shared.addでプリロードする
 PIXI.Loader.shared.add("../sound/hit.mp3");
 PIXI.Loader.shared.add("../image/ball.png");
+PIXI.Loader.shared.add("../image/1.png");
+PIXI.Loader.shared.add("../image/2.png");
 const sceneManager = new SceneManager(app);
 
 // プリロード処理が終わったら呼び出されるイベント
@@ -65,6 +67,17 @@ PIXI.Loader.shared.load((loader, resources) => {
         const gameScene = new PIXI.Container();
         // ゲームシーンを画面に追加
         app.stage.addChild(gameScene);
+
+        const image1 = new PIXI.Sprite(resources["../image/1.png"].texture);
+        image1.x = 50;
+        image1.y = 50;
+        gameScene.addChild(image1); // ボールをシーンに追加
+
+        const image2 = new PIXI.Sprite(resources["../image/2.png"].texture);
+
+        image2.x = 50;
+        image2.y = 300;
+        gameScene.addChild(image2); // ボールをシーンに追加
 
         // ボール画像を表示するスプライトオブジェクトを実体化させる
         const ball = new PIXI.Sprite(resources["../image/ball.png"].texture); //引数には、プリロードしたURLを追加する
