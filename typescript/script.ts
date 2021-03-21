@@ -25,15 +25,15 @@ app.renderer.view.style.height = "600px";
 app.renderer.view.style.display = "block";
 
 // canvasの周りを点線枠で囲う (canvasの位置がわかりやすいので入れている)
-app.renderer.view.style.border = "2px dashed black";
+app.renderer.view.style.border = "3px dashed #ffcccc";
 
 // canvasの背景色
-app.renderer.backgroundColor = 0x333333;
+app.renderer.backgroundColor = 0xdeb887;
 
 // ゲームで使用する画像をあらかじめ読み込んでおく(プリロードという)
 // v5.3.2　だと PIXI.Loader.shared.addでプリロードする
 PIXI.Loader.shared.add("../sound/hit.mp3");
-PIXI.Loader.shared.add("../image/ball.png");
+PIXI.Loader.shared.add("../sound/crear.mp3");
 PIXI.Loader.shared.add("../image/1.png");
 PIXI.Loader.shared.add("../image/2.png");
 const sceneManager = new SceneManager(app);
@@ -55,8 +55,6 @@ PIXI.Loader.shared.load((loader, resources) => {
      */
 
     let score = 0; // スコア
-    let ballVx = 5; // ボールの毎フレーム動くx方向
-    let ballVy = 0; // ボールの毎フレーム動くy方向
     let timmer = 0; // タイマー
     let displayTimmer = "";
 
@@ -85,13 +83,13 @@ PIXI.Loader.shared.load((loader, resources) => {
 
         const image1 = new PIXI.Sprite(resources["../image/1.png"].texture);
         image1.x = 50;
-        image1.y = 50;
+        image1.y = 70;
         gameScene.addChild(image1); // ボールをシーンに追加
 
         const image2 = new PIXI.Sprite(resources["../image/2.png"].texture);
 
         image2.x = 50;
-        image2.y = 300;
+        image2.y = 350;
         gameScene.addChild(image2); // ボールをシーンに追加
 
         //ヒットエリアの描画
@@ -111,73 +109,59 @@ PIXI.Loader.shared.load((loader, resources) => {
             difference.obj.drawShape(rect);
             difference.obj.endFill();
 
-            difference.obj.interactive = true;
+            difference.obj.interactive = true; // クリック可能にする
             difference.obj.hitArea = rect;
 
-            difference.obj.on('click', function () {
+            difference.obj.on('pointerdown', function () { // クリック時に発動する関数
                 if (difference.status === 0) {
                     score++
                     difference.status = 1
+                    resources["../sound/hit.mp3"].sound.play(); // クリックで音が鳴る
                 }
-                console.log('click');
             });
-            gameScene.addChild(difference.obj)
+            gameScene.addChild(difference.obj) //間違い範囲の図形をシーンに追加
         });
-
-        // ボール画像を表示するスプライトオブジェクトを実体化させる
-        const ball = new PIXI.Sprite(resources["../image/ball.png"].texture); //引数には、プリロードしたURLを追加する
-        ball.x = 200; // x座標
-        ball.y = 500; // y座標
-        ball.interactive = true; // クリック可能にする
-        ball.on("pointerdown", () =>      // クリック時に発動する関数
-        {
-            score++; // スコアを１増やす
-            resources["../sound/hit.mp3"].sound.play(); // クリックで音が鳴る
-        });
-        gameScene.addChild(ball); // ボールをシーンに追加
 
         // テキストに関するパラメータを定義する(ここで定義した意外にもたくさんパラメータがある)
         const textStyle = new PIXI.TextStyle({
-            fontFamily: "Arial", // フォント
+            fontFamily: "Myriad", // フォント
             fontSize: 20,// フォントサイズ
-            fill: 0xffffff, // 色(16進数で定義するので#ffffffと書かずに0xffffffと書く)
-            dropShadow: true, // ドロップシャドウを有効にする（右下に影をつける）
-            dropShadowDistance: 2, // ドロップシャドウの影の距離
+            fill: 0xffffff, // 色(16進数で定義する これはオレンジ色)
         });
-
-        const text = new PIXI.Text("SCORE:0", textStyle); //スコア表示テキスト
+        const text = new PIXI.Text(`間違い:0/${differences.length}`, textStyle); //スコア表示テキスト
+        text.y = 3;
+        text.x = 3;
         gameScene.addChild(text); // スコア表示テキストを画面に追加する
 
         const textTimer = new PIXI.Text("Timer:0", textStyle); //スコア表示テキスト
-        textTimer.x = 100;
+        textTimer.y = 3;
+        textTimer.x = 150;
         gameScene.addChild(textTimer); // スコア表示テキストを画面に追加する
+
+        const mihon = new PIXI.Text("見本", textStyle); //スコア表示テキスト
+        mihon.y = 40;
+        mihon.x = 50;
+        gameScene.addChild(mihon); // スコア表示テキストを画面に追加する
+
+
+        const description = new PIXI.Text("下のイラストの間違えをタップしよう！", textStyle); //スコア表示テキスト
+        description.y = 290;
+        description.x = 15;
+        gameScene.addChild(description); // スコア表示テキストを画面に追加する
 
         function gameLoop() // 毎フレームごとに処理するゲームループ
         {
             // スコアテキストを毎フレームアップデートする
-            text.text = `SCORE:${score}`;
+            text.text = `間違い:${score}/${differences.length}`;
 
             timmer += 1 / 60;
             displayTimmer = timmer.toFixed(2);
 
             textTimer.text = `Timer:${displayTimmer}`;
 
-            if (score === 0) return; // スコアが０の時(球に触っていないとき)はここで終了させる
-
-            if (ball.x > 340) // ボールが右端に到達したら(画面横幅400,球横幅60、アンカーは左上なので400-60=340の位置で球が右端に触れる)
-            {
-                ball.x = 340; // xの値を340にする(次のフレームで反射処理させないために必要) 
-                ballVx = -ballVx; // 速度を反転して反射の挙動にする
-            }
-            if (ball.x < 0) // ボールが左端に到達したら(アンカーは左上なので、0の位置で球が左端に触れる)
-            {
-                ball.x = 0; // xの値を0にする(次のフレームで反射処理させないために必要)
-                ballVx = -ballVx; // 速度を反転して反射の挙動にする
-            }
-            ballVy += 0.1; // yの速度に0.1を足していくと、重力みたいな挙動になる
-            if (ball.y >= 600) // 球が画面下に消えたら
-            {
-                createEndScene(); // 結果画面を表示する
+            if (score === differences.length) {
+                createEndScene() // 結果画面を表示する
+                resources["../sound/crear.mp3"].sound.play(); // クリックで音が鳴る
             }
         }
 
@@ -201,29 +185,27 @@ PIXI.Loader.shared.load((loader, resources) => {
 
         // テキストに関するパラメータを定義する(ここで定義した意外にもたくさんパラメータがある)
         const textStyle = new PIXI.TextStyle({
-            fontFamily: "Arial", // フォント
-            fontSize: 32,// フォントサイズ
-            fill: 0xfcbb08, // 色(16進数で定義する これはオレンジ色)
-            dropShadow: true, // ドロップシャドウを有効にする（右下に影をつける）
-            dropShadowDistance: 2, // ドロップシャドウの影の距離
+            fontFamily: "Myriad", // フォント
+            fontSize: 28,// フォントサイズ
+            fill: 0xffffff, // 色(16進数で定義する これはオレンジ色)
         });
 
         // テキストオブジェクトの定義
-        const text = new PIXI.Text(`SCORE:${score}で力尽きた`, textStyle); // 結果画面のテキスト
+        const text = new PIXI.Text(`${displayTimmer}秒で間違えを\n見つけられました！`, textStyle); // 結果画面のテキスト
         text.anchor.x = 0.5; // アンカーのxを中央に指定
         text.x = 200; // 座標指定 (xのアンカーが0.5で中央指定なので、テキストのx値を画面中央にすると真ん中にテキストが表示される)
-        text.y = 200; // 座標指定 (yのアンカーはデフォルトの0なので、画面上から200の位置にテキスト表示)
+        text.y = 100; // 座標指定 (yのアンカーはデフォルトの0なので、画面上から200の位置にテキスト表示)
         endScene.addChild(text); // 結果画面シーンにテキスト追加
 
         /**
          * 自作のボタン生成関数を使って、もう一度ボタンを生成
          * 引数の内容はcreateButton関数を参考に
          */
-        const retryButton = createButton("もう一度", 100, 60, 0xff0000, () => {
+        const retryButton = createButton("もう一度", 120, 60, 0xf09199, () => {
             // クリックした時の処理
             createGameScene(); // ゲームシーンを生成する
         });
-        retryButton.x = 50; // ボタンの座標指定
+        retryButton.x = 40; // ボタンの座標指定
         retryButton.y = 500; // ボタンの座標指定
         endScene.addChild(retryButton);　// ボタンを結果画面シーンに追加
 
@@ -231,13 +213,13 @@ PIXI.Loader.shared.load((loader, resources) => {
          * 自作のボタン生成関数を使って、ツイートボタンを生成
          * 引数の内容はcreateButton関数を参考に
          */
-        const tweetButton = createButton("ツイート", 100, 60, 0x0000ff, () => {
+        const tweetButton = createButton("ツイート", 120, 60, 0x82cddd, () => {
             //ツイートＡＰＩに送信
             //結果ツイート時にURLを貼るため、このゲームのURLをここに記入してURLがツイート画面に反映されるようにエンコードする
-            const url = encodeURI("https://hothukurou.com"); // ツイートに載せるURLを指定(文字はエンコードする必要がある)
-            window.open(`http://twitter.com/intent/tweet?text=SCORE:${score}点で力尽きた&hashtags=sample&url=${url}`); //ハッシュタグをsampleにする
+            const url = encodeURI("https://machigae-game.web.app/"); // ツイートに載せるURLを指定(文字はエンコードする必要がある)
+            window.open(`http://twitter.com/intent/tweet?text=${displayTimmer}秒で間違えを\n見つけられました！&url=${url}`); //ハッシュタグをsampleにする
         });
-        tweetButton.x = 250; // ボタンの座標指定
+        tweetButton.x = 240; // ボタンの座標指定
         tweetButton.y = 500; // ボタンの座標指定
         endScene.addChild(tweetButton); // ボタンを結果画面シーンに追加
     }
