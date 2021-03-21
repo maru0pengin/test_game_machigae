@@ -93,19 +93,18 @@ PIXI.Loader.shared.load((loader, resources) => {
         gameScene.addChild(image2); // ボールをシーンに追加
 
         //ヒットエリアの描画
-        let length = 20;//ヒットエリアの幅
+        let length = 30;//ヒットエリアの幅
 
         const differences = [
-            { x: 80, y: 338, status: 0, obj: null },
-            { x: 314, y: 339, status: 0, obj: null },
-            { x: 128, y: 466, status: 0, obj: null },
-            { x: 293, y: 472, status: 0, obj: null },
+            { x: 104, y: 394, status: 0, obj: null },
+            { x: 110, y: 425, status: 0, obj: null },
+            { x: 270, y: 405, status: 0, obj: null },
         ];
 
         differences.forEach((difference, i) => {
             difference.obj = new PIXI.Graphics();
             let rect = new PIXI.Rectangle(difference.x - length / 2, difference.y - length / 2, length, length);
-            difference.obj.beginFill(0xfff000, 0.5); //ヒットエリアは透明
+            difference.obj.beginFill(0xfff000, 0); //ヒットエリアは透明
             difference.obj.drawShape(rect);
             difference.obj.endFill();
 
