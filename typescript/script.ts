@@ -94,28 +94,35 @@ PIXI.Loader.shared.load((loader, resources) => {
         image2.y = 300;
         gameScene.addChild(image2); // ボールをシーンに追加
 
-        var obj = new PIXI.Graphics();
-
-        let x = 100;
-        let y1 = 100;
-        let y2 = 200;
-
         //ヒットエリアの描画
         let length = 20;//ヒットエリアの幅
-        let rect = new PIXI.Rectangle(80 - length / 2, 338 - length / 2, length, length);
-        obj.beginFill(0xfff000, 0.5); //ヒットエリアは透明
-        obj.drawShape(rect);
-        obj.endFill();
 
-        obj.interactive = true;
-        obj.hitArea = rect;
+        const differences = [
+            { x: 80, y: 338, status: 0, obj: null },
+            { x: 314, y: 339, status: 0, obj: null },
+            { x: 128, y: 466, status: 0, obj: null },
+            { x: 293, y: 472, status: 0, obj: null },
+        ];
 
-        obj.on('click', function () {
-            score++
-            console.log('click');
+        differences.forEach((difference, i) => {
+            difference.obj = new PIXI.Graphics();
+            let rect = new PIXI.Rectangle(difference.x - length / 2, difference.y - length / 2, length, length);
+            difference.obj.beginFill(0xfff000, 0.5); //ヒットエリアは透明
+            difference.obj.drawShape(rect);
+            difference.obj.endFill();
+
+            difference.obj.interactive = true;
+            difference.obj.hitArea = rect;
+
+            difference.obj.on('click', function () {
+                if (difference.status === 0) {
+                    score++
+                    difference.status = 1
+                }
+                console.log('click');
+            });
+            gameScene.addChild(difference.obj)
         });
-
-        gameScene.addChild(obj)
 
         // ボール画像を表示するスプライトオブジェクトを実体化させる
         const ball = new PIXI.Sprite(resources["../image/ball.png"].texture); //引数には、プリロードしたURLを追加する
@@ -125,7 +132,6 @@ PIXI.Loader.shared.load((loader, resources) => {
         ball.on("pointerdown", () =>      // クリック時に発動する関数
         {
             score++; // スコアを１増やす
-            ballVy = -8; // ボールのＹ速度を-8にする(上に飛ぶようにしている)
             resources["../sound/hit.mp3"].sound.play(); // クリックで音が鳴る
         });
         gameScene.addChild(ball); // ボールをシーンに追加
@@ -158,8 +164,6 @@ PIXI.Loader.shared.load((loader, resources) => {
 
             if (score === 0) return; // スコアが０の時(球に触っていないとき)はここで終了させる
 
-            ball.x += ballVx; // ボールに速度を加算
-            ball.y += ballVy; // ボールに速度を加算
             if (ball.x > 340) // ボールが右端に到達したら(画面横幅400,球横幅60、アンカーは左上なので400-60=340の位置で球が右端に触れる)
             {
                 ball.x = 340; // xの値を340にする(次のフレームで反射処理させないために必要) 
