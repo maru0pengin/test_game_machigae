@@ -38,6 +38,13 @@ PIXI.Loader.shared.add("../image/1.png");
 PIXI.Loader.shared.add("../image/2.png");
 const sceneManager = new SceneManager(app);
 
+
+// 一座標確認に使用
+app.view.addEventListener('pointermove', (ev) => {
+    console.log(ev.clientX, ev.clientY);
+});
+
+
 // プリロード処理が終わったら呼び出されるイベント
 PIXI.Loader.shared.load((loader, resources) => {
     /**
@@ -78,6 +85,29 @@ PIXI.Loader.shared.load((loader, resources) => {
         image2.x = 50;
         image2.y = 300;
         gameScene.addChild(image2); // ボールをシーンに追加
+
+        var obj = new PIXI.Graphics();
+
+        let x = 100;
+        let y1 = 100;
+        let y2 = 200;
+
+        //ヒットエリアの描画
+        let length = 20;//ヒットエリアの幅
+        let rect = new PIXI.Rectangle(80 - length / 2, 338 - length / 2, length, length);
+        obj.beginFill(0xfff000, 0.5); //ヒットエリアは透明
+        obj.drawShape(rect);
+        obj.endFill();
+
+        obj.interactive = true;
+        obj.hitArea = rect;
+
+        obj.on('click', function () {
+            score++
+            console.log('click');
+        });
+
+        gameScene.addChild(obj)
 
         // ボール画像を表示するスプライトオブジェクトを実体化させる
         const ball = new PIXI.Sprite(resources["../image/ball.png"].texture); //引数には、プリロードしたURLを追加する
