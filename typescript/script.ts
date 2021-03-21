@@ -32,14 +32,12 @@ app.renderer.backgroundColor = 0x333333;
 
 // ゲームで使用する画像をあらかじめ読み込んでおく(プリロードという)
 // v5.3.2　だと PIXI.Loader.shared.addでプリロードする
-PIXI.Loader.shared.add("sound/hit.mp3");
-PIXI.Loader.shared.add("image/ball.png");
-
+PIXI.Loader.shared.add("../sound/hit.mp3");
+PIXI.Loader.shared.add("../image/ball.png");
 const sceneManager = new SceneManager(app);
 
 // プリロード処理が終わったら呼び出されるイベント
-PIXI.Loader.shared.load((loader, resources) =>
-{
+PIXI.Loader.shared.load((loader, resources) => {
     /**
      * 状態が変化する変数一覧
      */
@@ -54,8 +52,7 @@ PIXI.Loader.shared.load((loader, resources) =>
     /**
      * ゲームのメインシーンを生成する関数
      */
-    function createGameScene()
-    {
+    function createGameScene() {
         // 他に表示しているシーンがあれば削除
         sceneManager.removeAllScene();
         // 毎フレームイベントを削除
@@ -70,7 +67,7 @@ PIXI.Loader.shared.load((loader, resources) =>
         app.stage.addChild(gameScene);
 
         // ボール画像を表示するスプライトオブジェクトを実体化させる
-        const ball = new PIXI.Sprite(resources["image/ball.png"].texture); //引数には、プリロードしたURLを追加する
+        const ball = new PIXI.Sprite(resources["../image/ball.png"].texture); //引数には、プリロードしたURLを追加する
         ball.x = 200; // x座標
         ball.y = 500; // y座標
         ball.interactive = true; // クリック可能にする
@@ -78,7 +75,7 @@ PIXI.Loader.shared.load((loader, resources) =>
         {
             score++; // スコアを１増やす
             ballVy = -8; // ボールのＹ速度を-8にする(上に飛ぶようにしている)
-            resources["sound/hit.mp3"].sound.play(); // クリックで音が鳴る
+            resources["../sound/hit.mp3"].sound.play(); // クリックで音が鳴る
         });
         gameScene.addChild(ball); // ボールをシーンに追加
 
@@ -127,8 +124,7 @@ PIXI.Loader.shared.load((loader, resources) =>
     /**
      * ゲームの結果画面シーンを生成する関数
      */
-    function createEndScene()
-    {
+    function createEndScene() {
         // 他に表示しているシーンがあれば削除
         sceneManager.removeAllScene();
         // 毎フレームイベントを削除
@@ -159,8 +155,7 @@ PIXI.Loader.shared.load((loader, resources) =>
          * 自作のボタン生成関数を使って、もう一度ボタンを生成
          * 引数の内容はcreateButton関数を参考に
          */
-        const retryButton = createButton("もう一度", 100, 60, 0xff0000, () =>
-        {
+        const retryButton = createButton("もう一度", 100, 60, 0xff0000, () => {
             // クリックした時の処理
             createGameScene(); // ゲームシーンを生成する
         });
@@ -172,8 +167,7 @@ PIXI.Loader.shared.load((loader, resources) =>
          * 自作のボタン生成関数を使って、ツイートボタンを生成
          * 引数の内容はcreateButton関数を参考に
          */
-        const tweetButton = createButton("ツイート", 100, 60, 0x0000ff, () =>
-        {
+        const tweetButton = createButton("ツイート", 100, 60, 0x0000ff, () => {
             //ツイートＡＰＩに送信
             //結果ツイート時にURLを貼るため、このゲームのURLをここに記入してURLがツイート画面に反映されるようにエンコードする
             const url = encodeURI("https://hothukurou.com"); // ツイートに載せるURLを指定(文字はエンコードする必要がある)
