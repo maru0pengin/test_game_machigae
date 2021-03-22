@@ -79,4 +79,4 @@ dist
 *.js.map
 
 # .firebase以下のファイルはupしない
-.firebase/
+.firebase/*
