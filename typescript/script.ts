@@ -46,8 +46,6 @@ app.view.addEventListener('pointermove', (ev) => {
 
 
 
-
-
 // プリロード処理が終わったら呼び出されるイベント
 PIXI.Loader.shared.load((loader, resources) => {
     /**
@@ -93,9 +91,17 @@ PIXI.Loader.shared.load((loader, resources) => {
         gameScene.addChild(image2); // ボールをシーンに追加
 
         //ヒットエリアの描画
-        let length = 30;//ヒットエリアの幅
+        const length = 30;//ヒットエリアの幅
+        const radius = 20;//正解時に出す縁の半径
+
 
         const differences = [
+            { x: 104, y: 394, status: 0, obj: null },
+            { x: 110, y: 425, status: 0, obj: null },
+            { x: 270, y: 405, status: 0, obj: null },
+        ];
+
+        const correctCircle = [
             { x: 104, y: 394, status: 0, obj: null },
             { x: 110, y: 425, status: 0, obj: null },
             { x: 270, y: 405, status: 0, obj: null },
@@ -113,7 +119,15 @@ PIXI.Loader.shared.load((loader, resources) => {
 
             difference.obj.on('pointerdown', function () { // クリック時に発動する関数
                 if (difference.status === 0) {
+                    //正解を示す円を表示させる
+                    correctCircle[i].obj = new PIXI.Graphics();
+                    correctCircle[i].obj.lineStyle(5, 0xec6d71, 1);
+                    correctCircle[i].obj.drawCircle(difference.x, difference.y - radius / 2, radius, radius);
+                    gameScene.addChild(correctCircle[i].obj);
+
+                    //正解数を増やす
                     score++
+                    //正解済みの間違えに設定
                     difference.status = 1
                     resources["../sound/hit.mp3"].sound.play(); // クリックで音が鳴る
                 }
