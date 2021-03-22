@@ -77,3 +77,6 @@ dist
 *.js
 !webpack.config.js
 *.js.map
+
+# .firebase以下のファイルはupしない
+.firebase/*
